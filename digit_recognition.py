@@ -18,8 +18,11 @@ if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
     ssl._create_default_https_context = ssl._create_unverified_context
 
 #Fetching the data
-X, y = fetch_openml('mnist_784', version=1, return_X_y=True)
-print(pd.Series(y).value_counts())
+if not os.path.exists('model.pkl'):
+    X, y = fetch_openml('mnist_784', version=1, return_X_y=True)
+    pickle.dump((X, y), open('model.pkl', 'wb'))
+else:
+    X, y = pickle.load(open('model.pkl', 'rb'))
 classes = ['0', '1', '2','3', '4','5', '6', '7', '8', '9']
 nclasses = len(classes)
 
@@ -29,8 +32,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=9, train_
 X_train_scaled = X_train/255.0
 X_test_scaled = X_test/255.0
 
-#Fitting the training data into the model
-clf = LogisticRegression(solver='saga', multi_class='multinomial').fit(X_train_scaled, y_train)
+if not os.path.exists('clf.pkl'):
+    clf = LogisticRegression(solver = 'saga', multi_class='multinomial')
+    clf.fit(x_train_scaled, y_train)
+    pickle.dump(model, open('clf.pkl', 'wb'))
+else:
+    model = pickle.load(open('clf.pkl', 'rb'))
 
 #Calculating the accuracy of the model
 y_pred = clf.predict(X_test_scaled)
