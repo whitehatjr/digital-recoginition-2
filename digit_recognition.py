@@ -18,8 +18,11 @@ if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
     ssl._create_default_https_context = ssl._create_unverified_context
 
 #Fetching the data
-X, y = fetch_openml('mnist_784', version=1, return_X_y=True)
-print(pd.Series(y).value_counts())
+if not os.path.exists('model.pkl'):
+    X, y = fetch_openml('mnist_784', version=1, return_X_y=True)
+    pickle.dump((X, y), open('model.pkl', 'wb'))
+else:
+    X, y = pickle.load(open('model.pkl', 'rb'))
 classes = ['0', '1', '2','3', '4','5', '6', '7', '8', '9']
 nclasses = len(classes)
 
