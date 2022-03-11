@@ -32,8 +32,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=9, train_
 X_train_scaled = X_train/255.0
 X_test_scaled = X_test/255.0
 
-#Fitting the training data into the model
-clf = LogisticRegression(solver='saga', multi_class='multinomial').fit(X_train_scaled, y_train)
+if not os.path.exists('clf.pkl'):
+    clf = LogisticRegression(solver = 'saga', multi_class='multinomial')
+    clf.fit(x_train_scaled, y_train)
+    pickle.dump(model, open('clf.pkl', 'wb'))
+else:
+    model = pickle.load(open('clf.pkl', 'rb'))
 
 #Calculating the accuracy of the model
 y_pred = clf.predict(X_test_scaled)
