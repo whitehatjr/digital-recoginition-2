@@ -65,13 +65,17 @@ while(True):
     # represented by a single value from 0 to 255
     image_bw = im_pil.convert('L')
     image_bw_resized = image_bw.resize((28,28), Image.ANTIALIAS)
-
+    #invert the image
     image_bw_resized_inverted = PIL.ImageOps.invert(image_bw_resized)
     pixel_filter = 20
+    #converting to scalar quantity
     min_pixel = np.percentile(image_bw_resized_inverted, pixel_filter)
+    #using clip to limit the values between  0,255
     image_bw_resized_inverted_scaled = np.clip(image_bw_resized_inverted-min_pixel, 0, 255)
     max_pixel = np.max(image_bw_resized_inverted)
+    #converting into an array
     image_bw_resized_inverted_scaled = np.asarray(image_bw_resized_inverted_scaled)/max_pixel
+    #creating a test sample and making a prediction 
     test_sample = np.array(image_bw_resized_inverted_scaled).reshape(1,784)
     test_pred = clf.predict(test_sample)
     print("Predicted class is: ", test_pred)
